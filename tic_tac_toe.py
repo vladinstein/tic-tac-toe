@@ -5,6 +5,7 @@ class Tic_Tac_Toe:
 
     def make_move(self, number, value):
         self.square[number] = value
+    # Add check_win method
 
 def draw_grid():
     square_size = 200
@@ -12,11 +13,6 @@ def draw_grid():
         for y in range(3):
             rect = pygame.Rect(x * square_size, y * square_size, square_size, square_size)
             pygame.draw.rect(screen, black, rect, 3)
-
-#game.make_move(3, 1)
-#print(board.square)
-#if game.check_win():
-#    print('Victory!')
 
 pygame.init()
 
@@ -103,18 +99,53 @@ while True:
             board.make_move(4, 2)
         move = not move  
     # Sixth square
-    if x > width * 2 / 3 and x < width and y > height / 3 and y < height * 2 / 3:
-        pygame.draw.circle(screen, black, (width * 5 / 6, height / 2), 85, 6)
+    if x > width * 2 / 3 and x < width and y > height / 3 and y < height * 2 / 3 and board.square[5] == 0:
+        if move == True:
+            # If it's a first player's move, draw a cross
+            pygame.draw.line(screen, black, (width * 21 / 30, height * 11 / 30), (width * 29 / 30, height * 19 / 30), 9)
+            pygame.draw.line(screen, black, (width * 21 / 30, height * 19 / 30), (width * 29 / 30, height * 11 / 30), 9)
+            board.make_move(5, 1)
+        if move == False:
+            # Otherwise draw a circle
+            pygame.draw.circle(screen, black, (width * 5 / 6, height / 2), 85, 6)
+            board.make_move(5, 2)
+        move = not move 
     # Seventh square
-    if x > 0 and x < width / 3 and y > height * 2 / 3 and y < height:
-        pygame.draw.circle(screen, black, (width / 6, height * 5 / 6), 85, 6)
+    if x > 0 and x < width / 3 and y > height * 2 / 3 and y < height and board.square[6] == 0:
+        if move == True:
+            # If it's a first player's move, draw a cross
+            pygame.draw.line(screen, black, (width / 30, height * 21 / 30), (width * 9 / 30, height * 29 / 30), 9)
+            pygame.draw.line(screen, black, (width / 30, height * 29 / 30), (width * 9 / 30, height * 21 / 30), 9)
+            board.make_move(6, 1)
+        if move == False:
+            # Otherwise draw a circle
+            pygame.draw.circle(screen, black, (width / 6, height * 5 / 6), 85, 6)
+            board.make_move(6, 2)
+        move = not move
     # Eighth square
-    if x > width / 3 and x < width * 2 / 3 and y > height * 2 / 3 and y < height:
-        pygame.draw.circle(screen, black, (width / 2, height * 5 / 6), 85, 6)
+    if x > width / 3 and x < width * 2 / 3 and y > height * 2 / 3 and y < height and board.square[7] == 0:
+        if move == True:
+            # If it's a first player's move, draw a cross
+            pygame.draw.line(screen, black, (width * 11 / 30, height * 21 / 30), (width * 19 / 30, height * 29 / 30), 9)
+            pygame.draw.line(screen, black, (width * 11 / 30, height * 29 / 30), (width * 19 / 30, height * 21/ 30), 9)
+            board.make_move(7, 1)
+        if move == False:
+            # Otherwise draw a circle
+            pygame.draw.circle(screen, black, (width / 2, height * 5 / 6), 85, 6)
+            board.make_move(7, 2)
+        move = not move
     # Ninth square
-    if x > width * 2 / 3 and x < width and y > height * 2 / 3 and y < height:
-        pygame.draw.circle(screen, black, (width * 5 / 6, height * 5 / 6), 85, 6)
-
+    if x > width * 2 / 3 and x < width and y > height * 2 / 3 and y < height and board.square[8] == 0:
+        if move == True:
+            # If it's a first player's move, draw a cross
+            pygame.draw.line(screen, black, (width * 21 / 30, height * 21 / 30), (width * 29 / 30, height * 29 / 30), 9)
+            pygame.draw.line(screen, black, (width * 21 / 30, height * 29 / 30), (width * 29 / 30, height * 21/ 30), 9)
+            board.make_move(8, 1)
+        if move == False:
+            # Otherwise draw a circle
+            pygame.draw.circle(screen, black, (width * 5 / 6, height * 5 / 6), 85, 6)
+            board.make_move(8, 2)
+        move = not move
     pygame.display.flip()
 
 
