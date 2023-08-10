@@ -53,7 +53,6 @@ screen = pygame.display.set_mode(size)
 # What does this do?
 clock = pygame.time.Clock()
 
-screen.fill(white)
 move = True
 board = Tic_Tac_Toe()
 game_state = "start_menu"
@@ -85,8 +84,13 @@ def draw_start_menu():
     screen.blit(title, (width / 2 - title.get_width() / 2, height / 2 - title.get_height() * 2))
     screen.blit(start_comp, (width / 2 - start_comp.get_width() / 2, height / 2 + start_comp.get_height() / 2))
     screen.blit(start_human, (width / 2 - start_human.get_width() / 2, height / 2 + start_human.get_height() * 2))
+    # Left, top, width, height!!!!
+    rect_comp = pygame.Rect(width * 2 / 30, height * 16 / 30, width * 10 / 12, height / 12)
+    rect_human = pygame.Rect(width * 2 / 30, height * 20 / 30, width / 2, height / 12)
+    pygame.draw.rect(screen, white, rect_human, 6)
+    pygame.draw.rect(screen, white, rect_comp, 6)
     pygame.display.update()
-    return start_comp, start_human
+    return rect_comp, rect_human
     # Need to add rects here to be ble to use collidepoint
                 
 pygame.init()
@@ -101,118 +105,139 @@ while True:
         button_compt, button_human = draw_start_menu()
         if button_human.collidepoint(x, y):
             game_state = "game"
+            x = y = -1
 
     if game_state == "game":
+        screen.fill(white)
         tiles = draw_grid()
         
         # First square
         if tiles[0].collidepoint(x, y) and board.square[0] == 0:
             if move == True:
-                # If it's a first player's move, draw a cross
-                pygame.draw.line(screen, black, (width / 30, height / 30), (width * 9 / 30, height * 9 / 30), 9)
-                pygame.draw.line(screen, black, (width / 30, height * 9 / 30), (width * 9 / 30, height / 30), 9)
+                # Add first player's move to the list. 
                 board.make_move(0, 1)
             if move == False:
-                # Otherwise draw a circle
-                pygame.draw.circle(screen, black, (width / 6, height / 6), 85, 6)
+                # Add second player's move to the list.
                 board.make_move(0, 4)
             move = not move
         # Second square
         if tiles[1].collidepoint(x, y) and board.square[1] == 0:
             if move == True:
-                # If it's a first player's move, draw a cross
-                pygame.draw.line(screen, black, (width * 11 / 30, height / 30), (width * 19 / 30, height * 9 / 30), 9)
-                pygame.draw.line(screen, black, (width * 11 / 30, height * 9 / 30), (width * 19 / 30, height / 30), 9)
+                # Add first player's move to the list.
                 board.make_move(1, 1)
             if move == False:
-                # Otherwise draw a circle
-                pygame.draw.circle(screen, black, (width / 2, height / 6), 85, 6)
+                # Add second player's move to the list.
                 board.make_move(1, 4)
             move = not move
         # Third square
         if tiles[2].collidepoint(x, y) and board.square[2] == 0:
             if move == True:
-                # If it's a first player's move, draw a cross
-                pygame.draw.line(screen, black, (width * 21 / 30, height / 30), (width * 29 / 30, height * 9 / 30), 9)
-                pygame.draw.line(screen, black, (width * 21 / 30, height * 9 / 30), (width * 29 / 30, height / 30), 9)
+                # Add first player's move to the list.
                 board.make_move(2, 1)
             if move == False:
-                # Otherwise draw a circle
-                pygame.draw.circle(screen, black, (width * 5 / 6, height / 6), 85, 6)
+                # Add second player's move to the list.
                 board.make_move(2, 4)
             move = not move
         # Forth square
         if tiles[3].collidepoint(x, y) and board.square[3] == 0:
             if move == True:
-                # If it's a first player's move, draw a cross
-                pygame.draw.line(screen, black, (width / 30, height * 11 / 30), (width * 9 / 30, height * 19 / 30), 9)
-                pygame.draw.line(screen, black, (width / 30, height * 19 / 30), (width * 9 / 30, height * 11 / 30), 9)
+                # Add first player's move to the list.
                 board.make_move(3, 1)
             if move == False:
-                # Otherwise draw a circle
-                pygame.draw.circle(screen, black, (width / 6, height / 2), 85, 6)
+                # Add second player's move to the list.
                 board.make_move(3, 4)
             move = not move
         # Fifth square
         if tiles[4].collidepoint(x, y) and board.square[4] == 0:
             if move == True:
-                # If it's a first player's move, draw a cross
-                pygame.draw.line(screen, black, (width * 11 / 30, height * 11 / 30), (width * 19 / 30, height * 19 / 30), 9)
-                pygame.draw.line(screen, black, (width * 11 / 30, height * 19 / 30), (width * 19 / 30, height * 11 / 30), 9)
+                # Add first player's move to the list.
                 board.make_move(4, 1)
             if move == False:
-                # Otherwise draw a circle
-                pygame.draw.circle(screen, black, (width / 2, height / 2), 85, 6)
+                # Add second player's move to the list.
                 board.make_move(4, 4)
             move = not move  
         # Sixth square
         if tiles[5].collidepoint(x, y) and board.square[5] == 0:
             if move == True:
-                # If it's a first player's move, draw a cross
-                pygame.draw.line(screen, black, (width * 21 / 30, height * 11 / 30), (width * 29 / 30, height * 19 / 30), 9)
-                pygame.draw.line(screen, black, (width * 21 / 30, height * 19 / 30), (width * 29 / 30, height * 11 / 30), 9)
+                # Add first player's move to the list.
                 board.make_move(5, 1)
             if move == False:
-                # Otherwise draw a circle
-                pygame.draw.circle(screen, black, (width * 5 / 6, height / 2), 85, 6)
+                # Add second player's move to the list.
                 board.make_move(5, 4)
             move = not move 
         # Seventh square
         if tiles[6].collidepoint(x, y) and board.square[6] == 0:
             if move == True:
-                # If it's a first player's move, draw a cross
-                pygame.draw.line(screen, black, (width / 30, height * 21 / 30), (width * 9 / 30, height * 29 / 30), 9)
-                pygame.draw.line(screen, black, (width / 30, height * 29 / 30), (width * 9 / 30, height * 21 / 30), 9)
+                # Add first player's move to the list.
                 board.make_move(6, 1)
             if move == False:
-                # Otherwise draw a circle
-                pygame.draw.circle(screen, black, (width / 6, height * 5 / 6), 85, 6)
+                # Add second player's move to the list.
                 board.make_move(6, 4)
             move = not move
         # Eighth square
         if tiles[7].collidepoint(x, y) and board.square[7] == 0:
             if move == True:
-                # If it's a first player's move, draw a cross
-                pygame.draw.line(screen, black, (width * 11 / 30, height * 21 / 30), (width * 19 / 30, height * 29 / 30), 9)
-                pygame.draw.line(screen, black, (width * 11 / 30, height * 29 / 30), (width * 19 / 30, height * 21/ 30), 9)
+                # Add first player's move to the list.
                 board.make_move(7, 1)
             if move == False:
-                # Otherwise draw a circle
-                pygame.draw.circle(screen, black, (width / 2, height * 5 / 6), 85, 6)
+                # Add second player's move to the list.
                 board.make_move(7, 4)
             move = not move
         # Ninth square
         if tiles[8].collidepoint(x, y) and board.square[8] == 0:
             if move == True:
-                # If it's a first player's move, draw a cross
-                pygame.draw.line(screen, black, (width * 21 / 30, height * 21 / 30), (width * 29 / 30, height * 29 / 30), 9)
-                pygame.draw.line(screen, black, (width * 21 / 30, height * 29 / 30), (width * 29 / 30, height * 21/ 30), 9)
+                # Add first player's move to the list.
                 board.make_move(8, 1)
             if move == False:
-                # Otherwise draw a circle
-                pygame.draw.circle(screen, black, (width * 5 / 6, height * 5 / 6), 85, 6)
+                # Add second player's move to the list.
                 board.make_move(8, 4)
             move = not move
+        # Draw cross or circle depending on what's in the moves list.
+        if board.square[0] == 1:
+            pygame.draw.line(screen, black, (width / 30, height / 30), (width * 9 / 30, height * 9 / 30), 9)
+            pygame.draw.line(screen, black, (width / 30, height * 9 / 30), (width * 9 / 30, height / 30), 9)
+        elif board.square[0] == 4:                
+            pygame.draw.circle(screen, black, (width / 6, height / 6), 85, 6)
+        if board.square[1] == 1:
+            pygame.draw.line(screen, black, (width * 11 / 30, height / 30), (width * 19 / 30, height * 9 / 30), 9)
+            pygame.draw.line(screen, black, (width * 11 / 30, height * 9 / 30), (width * 19 / 30, height / 30), 9)
+        elif board.square[1] == 4:
+            pygame.draw.circle(screen, black, (width / 2, height / 6), 85, 6)
+        if board.square[2] == 1:
+            pygame.draw.line(screen, black, (width * 21 / 30, height / 30), (width * 29 / 30, height * 9 / 30), 9)
+            pygame.draw.line(screen, black, (width * 21 / 30, height * 9 / 30), (width * 29 / 30, height / 30), 9)
+        elif board.square[2] == 4:
+            pygame.draw.circle(screen, black, (width * 5 / 6, height / 6), 85, 6)
+        if board.square[3] == 1:
+            pygame.draw.line(screen, black, (width / 30, height * 11 / 30), (width * 9 / 30, height * 19 / 30), 9)
+            pygame.draw.line(screen, black, (width / 30, height * 19 / 30), (width * 9 / 30, height * 11 / 30), 9)
+        elif board.square[3] == 4:
+            pygame.draw.circle(screen, black, (width / 6, height / 2), 85, 6)
+        if board.square[4] == 1:
+            pygame.draw.line(screen, black, (width * 11 / 30, height * 11 / 30), (width * 19 / 30, height * 19 / 30), 9)
+            pygame.draw.line(screen, black, (width * 11 / 30, height * 19 / 30), (width * 19 / 30, height * 11 / 30), 9)
+        elif board.square[4] == 4:
+            pygame.draw.circle(screen, black, (width / 2, height / 2), 85, 6)
+        if board.square[5] == 1:
+            pygame.draw.line(screen, black, (width * 21 / 30, height * 11 / 30), (width * 29 / 30, height * 19 / 30), 9)
+            pygame.draw.line(screen, black, (width * 21 / 30, height * 19 / 30), (width * 29 / 30, height * 11 / 30), 9)
+        elif board.square[5] == 4:
+            pygame.draw.circle(screen, black, (width * 5 / 6, height / 2), 85, 6)
+        if board.square[6] == 1:
+            pygame.draw.line(screen, black, (width / 30, height * 21 / 30), (width * 9 / 30, height * 29 / 30), 9)
+            pygame.draw.line(screen, black, (width / 30, height * 29 / 30), (width * 9 / 30, height * 21 / 30), 9)
+        elif board.square[6] == 4:
+            pygame.draw.circle(screen, black, (width / 6, height * 5 / 6), 85, 6)
+        if board.square[7] == 1:
+            pygame.draw.line(screen, black, (width * 11 / 30, height * 21 / 30), (width * 19 / 30, height * 29 / 30), 9)
+            pygame.draw.line(screen, black, (width * 11 / 30, height * 29 / 30), (width * 19 / 30, height * 21/ 30), 9)
+        elif board.square[7] == 4:
+            pygame.draw.circle(screen, black, (width / 2, height * 5 / 6), 85, 6)
+        if board.square[8] == 1:
+            pygame.draw.line(screen, black, (width * 21 / 30, height * 21 / 30), (width * 29 / 30, height * 29 / 30), 9)
+            pygame.draw.line(screen, black, (width * 21 / 30, height * 29 / 30), (width * 29 / 30, height * 21/ 30), 9)
+        elif board.square[8] == 4:
+            pygame.draw.circle(screen, black, (width * 5 / 6, height * 5 / 6), 85, 6)
         # Check if there's a winner and what line it's on
         line, victory = board.check_win()
         # Draw a winning line.
