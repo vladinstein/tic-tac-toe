@@ -48,6 +48,10 @@ size = width, height = 600, 600
 red = 255, 0, 0
 black = 0, 0, 0
 white = 255, 255, 255
+blue = 0, 0, 128
+# These are the colors for the menu, they get changed on mouseover
+color_comp = white
+color_human = white 
 
 screen = pygame.display.set_mode(size)
 # What does this do?
@@ -56,7 +60,6 @@ clock = pygame.time.Clock()
 move = True
 board = Tic_Tac_Toe()
 game_state = "start_menu"
-
 
 
 def draw_grid():
@@ -79,19 +82,16 @@ def draw_start_menu():
     screen.fill(black)
     font = pygame.font.SysFont('arial', 40)
     title = font.render("Tic Tac Toe", True, white)
-    start_comp = font.render("Play against the computer", True, white)
-    start_human = font.render("Play against each other", True, white)
+    start_comp = font.render("Play against the computer", True, color_comp, black)
+    start_human = font.render("Play against each other", True, color_human, black)
+    rect_comp = start_comp.get_rect(topleft=(width / 2 - start_comp.get_width() / 2, height / 2))
+    rect_human = start_human.get_rect(topleft=(width / 2 - start_human.get_width() / 2, 
+                                               height / 2 + title.get_height() * 2))
     screen.blit(title, (width / 2 - title.get_width() / 2, height / 2 - title.get_height() * 2))
-    screen.blit(start_comp, (width / 2 - start_comp.get_width() / 2, height / 2 + start_comp.get_height() / 2))
-    screen.blit(start_human, (width / 2 - start_human.get_width() / 2, height / 2 + start_human.get_height() * 2))
-    # Left, top, width, height!!!!
-    rect_comp = pygame.Rect(width * 2 / 30, height * 16 / 30, width * 10 / 12, height / 12)
-    rect_human = pygame.Rect(width * 2 / 30, height * 20 / 30, width / 2, height / 12)
-    pygame.draw.rect(screen, white, rect_human, 6)
-    pygame.draw.rect(screen, white, rect_comp, 6)
+    screen.blit(start_comp, rect_comp)
+    screen.blit(start_human, rect_human)
     pygame.display.update()
     return rect_comp, rect_human
-    # Need to add rects here to be ble to use collidepoint
                 
 pygame.init()
 
@@ -102,7 +102,17 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
     if game_state == "start_menu":
-        button_compt, button_human = draw_start_menu()
+        button_comp, button_human = draw_start_menu()
+        # Change the color of the menu buttons on mouseover.
+        if button_human.collidepoint(pygame.mouse.get_pos()):
+            color_human = blue
+        else:
+            color_human = white
+        if button_comp.collidepoint(pygame.mouse.get_pos()):
+            color_comp = blue
+        else:
+            color_comp = white
+        # Start the game if the button is pressed.
         if button_human.collidepoint(x, y):
             game_state = "game"
             x = y = -1
