@@ -3,11 +3,22 @@ import sys, pygame
 class Tic_Tac_Toe:
     square = [0] * 9
 
-    def make_move(self, number, value):
+    def make_move(self, tiles, move):
         """
         Function to write down a move inside a list.
         """
-        self.square[number] = value
+        # i-th square
+        for i in range(9):
+            if tiles[i].collidepoint(x, y) and self.square[i] == 0:
+                if move == True:
+                    # Add first player's move to the list.
+                    self.square[i] = 1
+                if move == False:
+                    # Add second player's move to the list.
+                    self.square[i] = 4
+                move = not move
+        return move
+        
 
     def check_win(self):
         """
@@ -51,8 +62,8 @@ black = 0, 0, 0
 white = 255, 255, 255
 blue = 0, 0, 128
 # These are the colors for the menu, they get changed on mouseover
-color_comp = white
-color_human = white 
+color_button_1 = white
+color_button_2 = white 
 
 screen = pygame.display.set_mode(size)
 # What does this do?
@@ -63,15 +74,19 @@ board = Tic_Tac_Toe()
 game_state = "start_menu"
 game_over = False
 
-def draw_start_menu():
+def draw_menu():
     """
-    Function that draws a start menu.
+    Function that draws a start/choice menu.
     """
+    if game_state == "start_menu":
+        string_1, string_2 = "Play against the computer", "Play against each other"
+    else:
+        string_1, string_2 = "O", "X"
     screen.fill(black)
     font = pygame.font.SysFont('arial', 40)
     title = font.render("Tic Tac Toe", True, white)
-    start_comp = font.render("Play against the computer", True, color_comp, black)
-    start_human = font.render("Play against each other", True, color_human, black)
+    start_comp = font.render(string_1, True, color_button_1, black)
+    start_human = font.render(string_2, True, color_button_2, black)
     rect_comp = start_comp.get_rect(topleft=(width / 2 - start_comp.get_width() / 2, height / 2))
     rect_human = start_human.get_rect(topleft=(width / 2 - start_human.get_width() / 2, 
                                                height / 2 + title.get_height() * 2))
@@ -170,112 +185,46 @@ while True:
         if event.type == pygame.QUIT: sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
-    if game_state == "start_menu":
-        button_comp, button_human = draw_start_menu()
+    if game_state == "start_menu" or game_state == "choose_menu":
+        button_1, button_2 = draw_menu()
         # Change the color of the menu buttons on mouseover.
-        if button_human.collidepoint(pygame.mouse.get_pos()):
-            color_human = blue
+        if button_2.collidepoint(pygame.mouse.get_pos()):
+            color_button_2 = blue
         else:
-            color_human = white
-        if button_comp.collidepoint(pygame.mouse.get_pos()):
-            color_comp = blue
+            color_button_2 = white
+        if button_1.collidepoint(pygame.mouse.get_pos()):
+            color_button_1 = blue
         else:
-            color_comp = white
-        # Start the game if the button is pressed.
-        if button_human.collidepoint(x, y):
+            color_button_1 = white
+        # Action if the button is pressed.
+        if button_2.collidepoint(x, y) and game_state == "start_menu":
             game_state = "game"
             x = y = -1
-
+        if button_1.collidepoint(x, y) and game_state == "start_menu":
+            game_state = "choose_menu"
+            x = y = -1
+        if button_2.collidepoint(x, y) and game_state == "choose_menu":
+            game_state = "game_comp_x"
+            x = y = -1
+        if button_1.collidepoint(x, y) and game_state == "choose_menu":
+            game_state = "game_comp_o"
+            x = y = -1
+    
     if game_state == "game":
         screen.fill(white)
         tiles = draw_grid()
         if not game_over:
-            # First square
-            if tiles[0].collidepoint(x, y) and board.square[0] == 0:
-                if move == True:
-                    # Add first player's move to the list. 
-                    board.make_move(0, 1)
-                if move == False:
-                    # Add second player's move to the list.
-                    board.make_move(0, 4)
-                move = not move
-            # Second square
-            if tiles[1].collidepoint(x, y) and board.square[1] == 0:
-                if move == True:
-                    # Add first player's move to the list.
-                    board.make_move(1, 1)
-                if move == False:
-                    # Add second player's move to the list.
-                    board.make_move(1, 4)
-                move = not move
-            # Third square
-            if tiles[2].collidepoint(x, y) and board.square[2] == 0:
-                if move == True:
-                    # Add first player's move to the list.
-                    board.make_move(2, 1)
-                if move == False:
-                    # Add second player's move to the list.
-                    board.make_move(2, 4)
-                move = not move
-            # Forth square
-            if tiles[3].collidepoint(x, y) and board.square[3] == 0:
-                if move == True:
-                    # Add first player's move to the list.
-                    board.make_move(3, 1)
-                if move == False:
-                    # Add second player's move to the list.
-                    board.make_move(3, 4)
-                move = not move
-            # Fifth square
-            if tiles[4].collidepoint(x, y) and board.square[4] == 0:
-                if move == True:
-                    # Add first player's move to the list.
-                    board.make_move(4, 1)
-                if move == False:
-                    # Add second player's move to the list.
-                    board.make_move(4, 4)
-                move = not move  
-            # Sixth square
-            if tiles[5].collidepoint(x, y) and board.square[5] == 0:
-                if move == True:
-                    # Add first player's move to the list.
-                    board.make_move(5, 1)
-                if move == False:
-                    # Add second player's move to the list.
-                    board.make_move(5, 4)
-                move = not move 
-            # Seventh square
-            if tiles[6].collidepoint(x, y) and board.square[6] == 0:
-                if move == True:
-                    # Add first player's move to the list.
-                    board.make_move(6, 1)
-                if move == False:
-                    # Add second player's move to the list.
-                    board.make_move(6, 4)
-                move = not move
-            # Eighth square
-            if tiles[7].collidepoint(x, y) and board.square[7] == 0:
-                if move == True:
-                    # Add first player's move to the list.
-                    board.make_move(7, 1)
-                if move == False:
-                    # Add second player's move to the list.
-                    board.make_move(7, 4)
-                move = not move
-            # Ninth square
-            if tiles[8].collidepoint(x, y) and board.square[8] == 0:
-                if move == True:
-                    # Add first player's move to the list.
-                    board.make_move(8, 1)
-                if move == False:
-                    # Add second player's move to the list.
-                    board.make_move(8, 4)
-                move = not move
+            move = board.make_move(tiles, move)
         draw_moves()
         # Check if there's a winner and what line it's on
         line, game_over = board.check_win()
         draw_win()
-        pygame.display.flip()
+
+    if game_state == "game_comp_x" or game_state == "game_comp_o":
+        screen.fill(white)
+        tiles = draw_grid()
+
+    pygame.display.flip()
 
 
 
