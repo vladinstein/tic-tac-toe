@@ -1,23 +1,26 @@
 import sys, pygame
 
 class Tic_Tac_Toe:
-    square = [0] * 9
+    def __init__(self):
+        self.square = [0] * 9
 
-    def make_move(self, tiles, move):
+    def make_move(self, tiles, move, player_move):
         """
         Function to write down a move inside a list.
         """
         # i-th square
         for i in range(9):
             if tiles[i].collidepoint(x, y) and self.square[i] == 0:
-                if move == True:
+                if move == True and player_move == True:
                     # Add first player's move to the list.
                     self.square[i] = 1
-                if move == False:
+                if move == False and player_move == True:
                     # Add second player's move to the list.
                     self.square[i] = 4
+                if game_state == "game_comp_x" or game_state == "game_comp_o":
+                    player_move = not player_move
                 move = not move
-        return move
+        return move, player_move
         
 
     def check_win(self):
@@ -63,7 +66,7 @@ white = 255, 255, 255
 blue = 0, 0, 128
 # These are the colors for the menu, they get changed on mouseover
 color_button_1 = white
-color_button_2 = white 
+color_button_2 = white
 
 screen = pygame.display.set_mode(size)
 # What does this do?
@@ -73,6 +76,7 @@ move = True
 board = Tic_Tac_Toe()
 game_state = "start_menu"
 game_over = False
+player_move = True
 
 def draw_menu():
     """
@@ -81,7 +85,7 @@ def draw_menu():
     if game_state == "start_menu":
         string_1, string_2 = "Play against the computer", "Play against each other"
     else:
-        string_1, string_2 = "O", "X"
+        string_1, string_2 = "X", "O"
     screen.fill(black)
     font = pygame.font.SysFont('arial', 40)
     title = font.render("Tic Tac Toe", True, white)
@@ -203,18 +207,19 @@ while True:
         if button_1.collidepoint(x, y) and game_state == "start_menu":
             game_state = "choose_menu"
             x = y = -1
-        if button_2.collidepoint(x, y) and game_state == "choose_menu":
+        if button_1.collidepoint(x, y) and game_state == "choose_menu":
             game_state = "game_comp_x"
             x = y = -1
-        if button_1.collidepoint(x, y) and game_state == "choose_menu":
+        if button_2.collidepoint(x, y) and game_state == "choose_menu":
             game_state = "game_comp_o"
             x = y = -1
-    
+            player_move = False
+
     if game_state == "game":
         screen.fill(white)
         tiles = draw_grid()
         if not game_over:
-            move = board.make_move(tiles, move)
+            move, _ = board.make_move(tiles, move, player_move)
         draw_moves()
         # Check if there's a winner and what line it's on
         line, game_over = board.check_win()
@@ -223,6 +228,12 @@ while True:
     if game_state == "game_comp_x" or game_state == "game_comp_o":
         screen.fill(white)
         tiles = draw_grid()
+        if not game_over and player_move:
+            move, player_move = board.make_move(tiles, move, player_move)
+        draw_moves()
+        # Check if there's a winner and what line it's on
+        line, game_over = board.check_win()
+        draw_win()
 
     pygame.display.flip()
 
