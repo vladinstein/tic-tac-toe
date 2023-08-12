@@ -1,8 +1,41 @@
 import sys, pygame
+from copy import deepcopy
+from random import randrange
 
 class Tic_Tac_Toe:
     def __init__(self):
         self.square = [0] * 9
+
+    def try_move(self, i, move):
+        if self.square[i] == 0:
+            if move == True:
+                self.square[i] = 1
+            else:
+                self.square[i] = 4
+
+    def make_move_comp(self, i, move, player_move):
+        if self.square[i] == 0:
+            if move == True:
+                self.square[i] = 1
+            else:
+                self.square[i] = 4
+        move = not move
+        player_move = not player_move
+        return move, player_move
+
+    def make_random_move(self, move, player_move):
+        while True:
+            i = randrange(9)
+            if self.square[i] == 0:
+                if move == True:
+                    self.square[i] = 1
+                    break
+                else:
+                    self.square[i] = 4
+                    break
+        move = not move
+        player_move = not player_move
+        return move, player_move
 
     def make_move(self, tiles, move, player_move):
         """
@@ -21,7 +54,6 @@ class Tic_Tac_Toe:
                     player_move = not player_move
                 move = not move
         return move, player_move
-        
 
     def check_win(self):
         """
@@ -214,7 +246,7 @@ while True:
             game_state = "game_comp_o"
             x = y = -1
             player_move = False
-
+    # Playing with each other.
     if game_state == "game":
         screen.fill(white)
         tiles = draw_grid()
@@ -224,12 +256,27 @@ while True:
         # Check if there's a winner and what line it's on
         line, game_over = board.check_win()
         draw_win()
-
+    # This is for playing against computer
     if game_state == "game_comp_x" or game_state == "game_comp_o":
         screen.fill(white)
         tiles = draw_grid()
+        # Player's move
         if not game_over and player_move:
             move, player_move = board.make_move(tiles, move, player_move)
+        elif not game_over and not player_move:
+            # Winning move (computer) if there is one.
+            for i in range(9):
+                board_comp = deepcopy(board)
+                board_comp.try_move(i, move)
+                _, game_over = board_comp.check_win()
+                if game_over:
+                    move, player_move = board.make_move_comp(i, move, player_move)
+                    pygame.time.wait(500)
+                    break
+            # Random move
+            if not player_move:
+                move, player_move = board.make_random_move(move, player_move)
+                pygame.time.wait(500)
         draw_moves()
         # Check if there's a winner and what line it's on
         line, game_over = board.check_win()
