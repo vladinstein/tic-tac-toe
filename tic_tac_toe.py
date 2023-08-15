@@ -12,6 +12,13 @@ class Tic_Tac_Toe:
                 self.square[i] = 1
             else:
                 self.square[i] = 4
+    
+    def try_opp_move(self, i, move):
+        if self.square[i] == 0:
+            if move == True:
+                self.square[i] = 4
+            else:
+                self.square[i] = 1
 
     def make_move_comp(self, i, move, player_move):
         if self.square[i] == 0:
@@ -273,6 +280,15 @@ while True:
                     move, player_move = board.make_move_comp(i, move, player_move)
                     pygame.time.wait(500)
                     break
+            if not player_move:
+                for i in range(9):
+                    board_comp = deepcopy(board)
+                    board_comp.try_opp_move(i, move)
+                    _, game_over = board_comp.check_win()
+                    if game_over:
+                        move, player_move = board.make_move_comp(i, move, player_move)
+                        pygame.time.wait(500)
+                        break
             # Random move
             if not player_move:
                 move, player_move = board.make_random_move(move, player_move)
