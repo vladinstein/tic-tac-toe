@@ -7,6 +7,9 @@ class Tic_Tac_Toe:
         self.square = [0] * 9
 
     def try_move(self, i, move):
+        """
+        Function that tries a move for a computer. (To see if it's winning etc)
+        """
         if self.square[i] == 0:
             if move == True:
                 self.square[i] = 1
@@ -14,6 +17,10 @@ class Tic_Tac_Toe:
                 self.square[i] = 4
     
     def try_opp_move(self, i, move):
+        """
+        Function that tries a move for a computer's opponent (human). 
+        (To see if it's winning etc and react accordingly)
+        """
         if self.square[i] == 0:
             if move == True:
                 self.square[i] = 4
@@ -21,6 +28,9 @@ class Tic_Tac_Toe:
                 self.square[i] = 1
 
     def make_move_comp(self, i, move, player_move):
+        """
+        Function that makes a move for computer.
+        """
         if self.square[i] == 0:
             if move == True:
                 self.square[i] = 1
@@ -31,6 +41,9 @@ class Tic_Tac_Toe:
         return move, player_move
 
     def make_random_move(self, move, player_move):
+        """
+        Function to make a random move
+        """
         while True:
             i = randrange(9)
             if self.square[i] == 0:
@@ -280,6 +293,7 @@ while True:
                     move, player_move = board.make_move_comp(i, move, player_move)
                     pygame.time.wait(500)
                     break
+            # A move to prevent human from winning (if he can win in the next move).
             if not player_move:
                 for i in range(9):
                     board_comp = deepcopy(board)
