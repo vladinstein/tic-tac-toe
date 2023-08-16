@@ -40,6 +40,45 @@ class Tic_Tac_Toe:
         player_move = not player_move
         return move, player_move
 
+    def make_winning_move(self, move, player_move):
+        for i in range(9):
+            board_comp = deepcopy(self)
+            board_comp.try_move(i, move)
+            _, game_over = board_comp.check_win()
+            if game_over:
+                move, player_move = board.make_move_comp(i, move, player_move)
+                pygame.time.wait(500)
+                break
+        return move, player_move
+    
+    def make_fork(self, move, player_move):
+        """
+        Computer makes a fork move if possible (guaranteed win in the next move).
+
+        Try one move (A) (using a copy of an object). Then try all possible moves (B, C, D ...) with that move. 
+        If there's more than one winning move after the move A: (B or C or D e t.c. ...), make the move A.
+        """
+        for i in range(9):
+            board_comp = deepcopy(self)
+            board_comp.try_move(i, move)
+            find = False
+            count = 0
+            for j in range(9):
+                board_comp_2 = deepcopy(board_comp)
+                board_comp_2.try_move(j, move)
+                _, game_over = board_comp_2.check_win()
+                if game_over:
+                    count += 1
+                if count > 1:
+                    print("Fork")
+                    move, player_move = board.make_move_comp(i, move, player_move)
+                    pygame.time.wait(500)
+                    find = True
+                    break
+            if find:
+                break
+        return move, player_move
+
     def make_random_move(self, move, player_move):
         """
         Function to make a random move
@@ -81,33 +120,33 @@ class Tic_Tac_Toe:
         It returns the line number and the winner number.
         """
         line = None
-        game_over = None
+        game_over = False
         for i in range(0, 7, 3):
             if self.square[i] + self.square[i+1] + self.square[i+2] == 3:
                 line = i / 3
-                game_over = 1
-            if self.square[i] + self.square[i+1] + self.square[i+2] == 12:
+                game_over = True
+            elif self.square[i] + self.square[i+1] + self.square[i+2] == 12:
                 line = i / 3
-                game_over = 1
+                game_over = True
         for i in range(3):
             if self.square[i] + self.square[i+3] + self.square[i+6] == 3:
                 line = i + 3
-                game_over = 1
-            if self.square[i] + self.square[i+3] + self.square[i+6] == 12:
+                game_over = True
+            elif self.square[i] + self.square[i+3] + self.square[i+6] == 12:
                 line = i + 3
-                game_over = 1
+                game_over = True
         if self.square[0] + self.square[4] + self.square[8] == 3:
-                line = 6
-                game_over = 1
-        if self.square[0] + self.square[4] + self.square[8] == 12:
-                line = 6
-                game_over = 1
+            line = 6
+            game_over = True
+        elif self.square[0] + self.square[4] + self.square[8] == 12:
+            line = 6
+            game_over = True
         if self.square[2] + self.square[4] + self.square[6] == 3:
-                line = 7
-                game_over = 1
-        if self.square[2] + self.square[4] + self.square[6] == 12:
-                line = 7
-                game_over = 1
+            line = 7
+            game_over = True
+        elif self.square[2] + self.square[4] + self.square[6] == 12:
+            line = 7
+            game_over = True
         return line, game_over
 
 
@@ -124,6 +163,7 @@ screen = pygame.display.set_mode(size)
 # What does this do?
 clock = pygame.time.Clock()
 
+# move = True is for crosses, move = False for zeros.
 move = True
 board = Tic_Tac_Toe()
 game_state = "start_menu"
@@ -285,14 +325,7 @@ while True:
             move, player_move = board.make_move(tiles, move, player_move)
         elif not game_over and not player_move:
             # Winning move (computer) if there is one.
-            for i in range(9):
-                board_comp = deepcopy(board)
-                board_comp.try_move(i, move)
-                _, game_over = board_comp.check_win()
-                if game_over:
-                    move, player_move = board.make_move_comp(i, move, player_move)
-                    pygame.time.wait(500)
-                    break
+            move, player_move = board.make_winning_move(move, player_move)
             # A move to prevent human from winning (if he can win in the next move).
             if not player_move:
                 for i in range(9):
@@ -303,6 +336,9 @@ while True:
                         move, player_move = board.make_move_comp(i, move, player_move)
                         pygame.time.wait(500)
                         break
+            # Fork move if there is one.
+            if not player_move:
+                    move, player_move = board.make_fork(move, player_move)
             # Random move
             if not player_move:
                 move, player_move = board.make_random_move(move, player_move)
