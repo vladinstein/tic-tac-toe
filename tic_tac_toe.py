@@ -78,6 +78,35 @@ class Tic_Tac_Toe:
             if find:
                 break
         return move, player_move
+    
+    def block_fork(self, move, player_move):
+        """
+        Defending against a fork (if there's only one fork).
+        In progress: multiple forks defence or counter-attack.
+        """
+        fork_count = 0
+        forks = []
+        for i in range(9):
+            board_comp = deepcopy(self)
+            board_comp.try_opp_move(i, move)
+            find = False
+            count = 0
+            for j in range(9):
+                board_comp_2 = deepcopy(board_comp)
+                board_comp_2.try_opp_move(j, move)
+                _, game_over = board_comp_2.check_win()
+                if game_over:
+                    count += 1
+                if count > 1:
+                    fork_count += 1
+                    forks.append(i)
+                    print(fork_count)
+                    print(f"Fork alert:{i}")
+                    break
+        if fork_count == 1:
+            move, player_move = board.make_move_comp(forks[0], move, player_move)
+            pygame.time.wait(500)
+        return move, player_move
 
     def make_random_move(self, move, player_move):
         """
@@ -339,8 +368,12 @@ while True:
             # Fork move if there is one.
             if not player_move:
                     move, player_move = board.make_fork(move, player_move)
+            # Defend against fork move if there is one.
+            if not player_move:
+                    move, player_move = board.block_fork(move, player_move)
             # Random move
             if not player_move:
+                print('random')
                 move, player_move = board.make_random_move(move, player_move)
                 pygame.time.wait(500)
         draw_moves()
