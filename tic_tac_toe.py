@@ -84,12 +84,10 @@ class Tic_Tac_Toe:
         Defending against a fork (if there's only one fork).
         In progress: multiple forks defence or counter-attack.
         """
-        fork_count = 0
         forks = []
         for i in range(9):
             board_comp = deepcopy(self)
             board_comp.try_opp_move(i, move)
-            find = False
             count = 0
             for j in range(9):
                 board_comp_2 = deepcopy(board_comp)
@@ -98,14 +96,29 @@ class Tic_Tac_Toe:
                 if game_over:
                     count += 1
                 if count > 1:
-                    fork_count += 1
                     forks.append(i)
-                    print(fork_count)
+                    print(forks)
                     print(f"Fork alert:{i}")
                     break
-        if fork_count == 1:
+        if len(forks) == 1:
             move, player_move = board.make_move_comp(forks[0], move, player_move)
             pygame.time.wait(500)
+        elif len(forks) > 1:
+            for i in forks:
+                board_comp = deepcopy(self)
+                board_comp.try_move(i, move)
+                if board_comp.check_two_in_a_row():
+                    print('fork block two in a row')
+                    move, player_move = board.make_move_comp(i, move, player_move)
+                    break
+        if not player_move:
+            for i in range(9):
+                board_comp = deepcopy(self)
+                board_comp.try_move(i, move)
+                if board_comp.check_two_in_a_row():
+                    print('two in a row')
+                    move, player_move = board.make_move_comp(i, move, player_move)
+                    break
         return move, player_move
 
     def make_random_move(self, move, player_move):
@@ -177,6 +190,31 @@ class Tic_Tac_Toe:
             line = 7
             game_over = True
         return line, game_over
+
+    def check_two_in_a_row(self):
+        """
+        This function checks if there is two in a row
+        """
+        two_in_a_row = False
+        for i in range(0, 7, 3):
+            if self.square[i] + self.square[i+1] + self.square[i+2] == 2:
+                two_in_a_row = True
+            elif self.square[i] + self.square[i+1] + self.square[i+2] == 8:
+                two_in_a_row = True
+        for i in range(3):
+            if self.square[i] + self.square[i+3] + self.square[i+6] == 2:
+                two_in_a_row = True
+            elif self.square[i] + self.square[i+3] + self.square[i+6] == 8:
+                two_in_a_row = True
+        if self.square[0] + self.square[4] + self.square[8] == 2:
+            two_in_a_row = True
+        elif self.square[0] + self.square[4] + self.square[8] == 8:
+            two_in_a_row = True
+        if self.square[2] + self.square[4] + self.square[6] == 2:
+            two_in_a_row = True
+        elif self.square[2] + self.square[4] + self.square[6] == 8:
+            two_in_a_row = True
+        return two_in_a_row
 
 
 size = width, height = 600, 600
