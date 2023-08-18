@@ -36,8 +36,8 @@ class Tic_Tac_Toe:
                 self.square[i] = 1
             else:
                 self.square[i] = 4
-        move = not move
-        player_move = not player_move
+            move = not move
+            player_move = not player_move
         return move, player_move
 
     def make_winning_move(self, move, player_move):
@@ -86,6 +86,7 @@ class Tic_Tac_Toe:
         """
         forks, all_forks_coord = board.check_forks(move)
         print(all_forks_coord)
+        # If there's just one fork, block it.
         if len(forks) == 1:
             move, player_move = board.make_move_comp(forks[0], move, player_move)
             pygame.time.wait(500)
@@ -209,6 +210,12 @@ class Tic_Tac_Toe:
             game_over = True
         return line, game_over
 
+    def check_draw(self):
+        for i in range(9):
+            if self.square[i] == 0:
+                return False
+        return True
+
     def check_two_in_a_row(self):
         """
         This function checks if there is two in a row
@@ -282,6 +289,7 @@ move = True
 board = Tic_Tac_Toe()
 game_state = "start_menu"
 game_over = False
+draw = False
 player_move = True
 
 def draw_menu():
@@ -435,9 +443,9 @@ while True:
         screen.fill(white)
         tiles = draw_grid()
         # Player's move
-        if not game_over and player_move:
+        if not game_over and not draw and player_move:
             move, player_move = board.make_move(tiles, move, player_move)
-        elif not game_over and not player_move:
+        elif not game_over and not draw and not player_move:
             # Winning move (computer) if there is one.
             move, player_move = board.make_winning_move(move, player_move)
             # A move to prevent human from winning (if he can win in the next move).
@@ -456,6 +464,39 @@ while True:
             # Defend against fork move if there is one.
             if not player_move:
                     move, player_move = board.block_fork(move, player_move)
+            # Play center
+            if not player_move and board.square[4] == 0:
+                move, player_move = board.make_move_comp(4, move, player_move)
+                print('center')
+            # Play opposite corner:
+            if not player_move:    
+                for i in range(0, 9, 2):
+                    if i == 4:
+                        continue
+                    if move and board.square[i] == 4 and board.square[8 - i] == 0:
+                        move, player_move = board.make_move_comp(8 - i, move, player_move)
+                        print('Opposite corner')
+                        break
+                    if not move and board.square[i] == 1 and board.square[8 - i] == 0:
+                        move, player_move = board.make_move_comp(8 - i, move, player_move)
+                        print('Opposite corner')
+                        break
+            # Play epmty corner:
+            if not player_move:   
+                for i in range(0, 9, 2):
+                    if i == 4:
+                        continue
+                    if board.square[i] == 0:
+                        move, player_move = board.make_move_comp(i, move, player_move)
+                        print('Empty corner')
+                        break
+            # Play epmty side:
+            if not player_move:   
+                for i in range(1, 8, 2):
+                    if board.square[i] == 0:
+                        move, player_move = board.make_move_comp(i, move, player_move)
+                        print('Empty side')
+                        break
             # Random move
             if not player_move:
                 print('random')
@@ -464,6 +505,7 @@ while True:
         draw_moves()
         # Check if there's a winner and what line it's on
         line, game_over = board.check_win()
+        draw = board.check_draw()
         draw_win()
 
     pygame.display.flip()
