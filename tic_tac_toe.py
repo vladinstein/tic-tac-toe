@@ -84,40 +84,58 @@ class Tic_Tac_Toe:
         Defending against a fork (if there's only one fork).
         In progress: multiple forks defence or counter-attack.
         """
-        forks = []
-        for i in range(9):
-            board_comp = deepcopy(self)
-            board_comp.try_opp_move(i, move)
-            count = 0
-            for j in range(9):
-                board_comp_2 = deepcopy(board_comp)
-                board_comp_2.try_opp_move(j, move)
-                _, game_over = board_comp_2.check_win()
-                if game_over:
-                    count += 1
-                if count > 1:
-                    forks.append(i)
-                    print(forks)
-                    print(f"Fork alert:{i}")
-                    break
+        forks, all_forks_coord = board.check_forks(move)
+        print(all_forks_coord)
         if len(forks) == 1:
             move, player_move = board.make_move_comp(forks[0], move, player_move)
             pygame.time.wait(500)
+        # If there are two or more forks, they all should be blocked by a "two in a row".
         elif len(forks) > 1:
-            for i in forks:
-                board_comp = deepcopy(self)
-                board_comp.try_move(i, move)
-                if board_comp.check_two_in_a_row():
-                    print('fork block two in a row')
-                    move, player_move = board.make_move_comp(i, move, player_move)
-                    break
-        if not player_move:
             for i in range(9):
                 board_comp = deepcopy(self)
                 board_comp.try_move(i, move)
+                # If there's a two-in-a-row possibility
                 if board_comp.check_two_in_a_row():
-                    print('two in a row')
-                    move, player_move = board.make_move_comp(i, move, player_move)
+                    blocks_all_forks = True
+                    for fork_coord in all_forks_coord:
+                        if i not in fork_coord:
+                            blocks_all_forks = False
+                            break
+                    # And it can block all the forks...
+                    if blocks_all_forks:
+                        print('fork block two in a row')
+                        # Make that move.
+                        move, player_move = board.make_move_comp(i, move, player_move)
+                if player_move:
+                    break
+        # Otherwise, make two in a row, if it doesn't result in a win or a fork.
+        if not player_move:
+            move_made = False
+            for i in range(9):
+                board_comp = deepcopy(self)
+                board_comp.try_move(i, move)
+                # Find two in a row.
+                if board_comp.check_two_in_a_row():
+                    winning_coord = None
+                    # Find winning square computer is aiming to.
+                    for j in range(9):
+                        board_comp_2 = deepcopy(board_comp)
+                        board_comp_2.try_move(j, move)
+                        _, game_over = board_comp_2.check_win()
+                        if game_over:
+                            winning_coord = j
+                            break
+                    # Check if human can win or create a fork by playing to that square..
+                    board_comp_2 = deepcopy(board_comp)
+                    board_comp_2.try_opp_move(winning_coord, move)
+                    _, game_over = board_comp_2.check_win()
+                    # If not, make a move.
+                    if not game_over and winning_coord not in forks:
+                        print(all_forks_coord)
+                        print('two in a row how about that')
+                        move, player_move = board.make_move_comp(i, move, player_move)
+                        move_made = True
+                if move_made:
                     break
         return move, player_move
 
@@ -216,6 +234,35 @@ class Tic_Tac_Toe:
             two_in_a_row = True
         return two_in_a_row
 
+    def check_forks(self, move):
+        # This is a list of forks (middle coordinate)
+        forks = []
+        # This is a list of lists of fork coordinates (only middles and ending points).
+        all_forks_coord = []
+        for i in range(9):
+            board_comp = deepcopy(self)
+            board_comp.try_opp_move(i, move)
+            count = 0
+            # One list of fork coordinates (middle point and two endings)
+            forks_coord = []
+            for j in range(9):
+                board_comp_2 = deepcopy(board_comp)
+                board_comp_2.try_opp_move(j, move)
+                _, game_over = board_comp_2.check_win()
+                if game_over:
+                    count += 1
+                    # Add fork ending
+                    forks_coord.append(j)                                     
+                if count > 1:
+                    forks.append(i)
+                    # Add fork middle point
+                    forks_coord.append(i)
+                    # Add 1 fork coord list to the list of all coordinates
+                    all_forks_coord.append(forks_coord)
+                    print(forks)
+                    print(f"Fork alert:{i}")
+                    break
+        return forks, all_forks_coord
 
 size = width, height = 600, 600
 red = 255, 0, 0
