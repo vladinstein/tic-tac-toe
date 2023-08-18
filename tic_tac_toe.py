@@ -32,6 +32,7 @@ class Tic_Tac_Toe:
         Function that makes a move for computer.
         """
         if self.square[i] == 0:
+            pygame.time.wait(500)
             if move == True:
                 self.square[i] = 1
             else:
@@ -47,7 +48,6 @@ class Tic_Tac_Toe:
             _, game_over = board_comp.check_win()
             if game_over:
                 move, player_move = board.make_move_comp(i, move, player_move)
-                pygame.time.wait(500)
                 break
         return move, player_move
     
@@ -72,7 +72,6 @@ class Tic_Tac_Toe:
                 if count > 1:
                     print("Fork")
                     move, player_move = board.make_move_comp(i, move, player_move)
-                    pygame.time.wait(500)
                     find = True
                     break
             if find:
@@ -89,7 +88,6 @@ class Tic_Tac_Toe:
         # If there's just one fork, block it.
         if len(forks) == 1:
             move, player_move = board.make_move_comp(forks[0], move, player_move)
-            pygame.time.wait(500)
         # If there are two or more forks, they all should be blocked by a "two in a row".
         elif len(forks) > 1:
             for i in range(9):
@@ -147,6 +145,7 @@ class Tic_Tac_Toe:
         while True:
             i = randrange(9)
             if self.square[i] == 0:
+                pygame.time.wait(500)
                 if move == True:
                     self.square[i] = 1
                     break
@@ -456,7 +455,6 @@ while True:
                     _, game_over = board_comp.check_win()
                     if game_over:
                         move, player_move = board.make_move_comp(i, move, player_move)
-                        pygame.time.wait(500)
                         break
             # Fork move if there is one.
             if not player_move:
@@ -501,7 +499,6 @@ while True:
             if not player_move:
                 print('random')
                 move, player_move = board.make_random_move(move, player_move)
-                pygame.time.wait(500)
         draw_moves()
         # Check if there's a winner and what line it's on
         line, game_over = board.check_win()
